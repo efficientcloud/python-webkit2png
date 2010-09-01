@@ -1,4 +1,5 @@
 setup.py
+webkit2png.py
 webkit2png.egg-info/PKG-INFO
 webkit2png.egg-info/SOURCES.txt
 webkit2png.egg-info/dependency_links.txt

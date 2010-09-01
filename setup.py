@@ -16,6 +16,7 @@ setup(
     author_email = 'roland at dau-sicher de',
     packages = find_packages(),
     package_dir = {'webkit2png': 'webkit2png'},
+    py_modules = ['webkit2png'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
