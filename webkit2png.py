@@ -115,6 +115,7 @@ sys.exit(app.exec_())
         self.scaleToWidth = kwargs.get('scaleToWidth', 0)
         self.scaleToHeight = kwargs.get('scaleToHeight', 0)
         self.scaleRatio = kwargs.get('scaleRatio', 'keep')
+        self.scaleTransform = kwargs.get('scaleTransform', 'fast')
         # Set this to true if you want to capture flash.
         # Not that your desktop must be large enough for
         # fitting the whole window.
@@ -301,7 +302,13 @@ class _WebkitRendererHelper(QObject):
                 ratio = Qt.KeepAspectRatioByExpanding
             else: # 'ignore'
                 ratio = Qt.IgnoreAspectRatio
-            qImage = qImage.scaled(self.scaleToWidth, self.scaleToHeight, ratio)
+
+            if self.scaleTransform == 'smooth':
+                transform = Qt.SmoothTransformation
+            else:
+                transform = Qt.FastTransformation
+
+            qImage = qImage.scaled(self.scaleToWidth, self.scaleToHeight, ratio, transform)
             if self.scaleRatio == 'crop':
                 qImage = qImage.copy(0, 0, self.scaleToWidth, self.scaleToHeight)
         return qImage
