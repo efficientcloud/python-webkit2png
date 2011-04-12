@@ -208,7 +208,7 @@ class _WebkitRendererHelper(QObject):
             setattr(self,key,value)
 
         # Create and connect required PyQt4 objects
-        self._page = ConfigurableWebPage(self.ignoreAlerts, self.ignoreConfirms, self.ignoreConsoleMessages)
+        self._page = ConfigurableWebPage(None, self.ignoreAlerts, self.ignoreConfirms, self.ignoreConsoleMessages)
         self._view = QWebView()
         self._view.setPage(self._page)
         self._window = QMainWindow()
