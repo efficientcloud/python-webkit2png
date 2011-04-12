@@ -121,6 +121,9 @@ sys.exit(app.exec_())
         # fitting the whole window.
         self.grabWholeWindow = kwargs.get('grabWholeWindow', False) 
 
+        self.ignoreAlerts = kwargs.get('ignoreAlerts', False)
+        self.ignoreConfirms = kwargs.get('ignoreConfirms', False)
+        self.ignoreConsoleMessages = kwargs.get('ignoreConsoleMessages', False)
         
         # Set some default options for QWebPage
         self.qWebSettings = {
@@ -165,6 +168,28 @@ sys.exit(app.exec_())
         image.save(qBuffer, format)
         return qBuffer.buffer().data()
 
+class ConfigurableWebPage(QWebPage):
+    def __init__(self, parent=None, ignoreAlerts=False, ignoreConfirms=False, ignoreConsoleMessages=False):
+        super(ConfigurableWebPage, self).__init__(parent)
+        self.ignoreAlerts = ignoreAlerts
+        self.ignoreConfirms = ignoreConfirms
+        self.ignoreConsoleMessages = ignoreConsoleMessages
+
+    def javaScriptAlert(self, frame, msg):
+        if not self.ignoreAlerts:
+            return super(ConfigurableWebPage, self).javaScriptAlert(frame, msg)
+
+    def javaScriptConfirm(self, frame, msg):
+        if not self.ignoreConfirms:
+            return super(ConfigurableWebPage, self).javaScriptConfirm(frame, msg)
+        else:
+            return False
+
+    def javaScriptConsoleMessage(self, message, lineNumber, sourceID):
+        if not self.ignoreConsoleMessages:
+            return super(ConfigurableWebPage, self).javaScriptConsoleMessage(message, lineNumber, sourceID)
+
+
 class _WebkitRendererHelper(QObject):
     """This helper class is doing the real work. It is required to 
     allow WebkitRenderer.render() to be called "asynchronously"
@@ -183,7 +208,7 @@ class _WebkitRendererHelper(QObject):
             setattr(self,key,value)
 
         # Create and connect required PyQt4 objects
-        self._page = QWebPage()
+        self._page = ConfigurableWebPage(ignoreAlerts, ignoreConfirms, ignoreConsoleMessages)
         self._view = QWebView()
         self._view.setPage(self._page)
         self._window = QMainWindow()
